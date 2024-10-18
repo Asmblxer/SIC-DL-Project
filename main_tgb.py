@@ -5,7 +5,9 @@ from io import BytesIO
 import taipy.gui.builder as tgb
 import pickle
 import numpy as np
-from tensorflow.keras.preprocessing import image
+import tensorflow_hub as hub
+import tensorflow as tf
+from tensorflow.keras.utils import load_img, img_to_array
 
 path_upload = ""
 original_image = None
@@ -17,14 +19,17 @@ style_image_path = ""
 content_image_path = ""
 styled_image = None
 styled = False
+style_image = None
+content_image = None
 
 # Load the colorization model
 with open("color_model.pkl", "rb") as model_file:
     colorizer_model = pickle.load(model_file)
 
-# Load the styling model     model = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2')
-with open("style_model.pkl", "rb") as style_model_file:
-    style_model = pickle.load(style_model_file)
+# Load the styling model     
+style_model = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2')
+# with open("style_model.pkl", "rb") as style_model_file:
+#     style_model = pickle.load(style_model_file)
 
 def convert_image(img):
     buf = BytesIO()
@@ -67,14 +72,18 @@ def upload_content_image(state):
     state.styled = False
 
 def style_image(state, id=None, action=None):
+    if state.style_image is None or state.content_image is None:
+        notify(state, "error", "Please upload both style and content images.")
+        return
+
     state.styled = False
     notify(state, "info", "Styling the image...")
     
     style_preprocessed, _ = preprocess_image(state.style_image)
     content_preprocessed, original_size = preprocess_image(state.content_image)
     
-    styled_output = style_model.predict([style_preprocessed, content_preprocessed])
-    styled_image = Image.fromarray((styled_output[0] * 255).astype('uint8'))
+    styled_output = style_model(tf.constant(content_preprocessed), tf.constant(style_preprocessed))
+    styled_image = Image.fromarray(tf.cast(styled_output[0] * 255, tf.uint8).numpy())
     styled_image = styled_image.resize(original_size, Image.LANCZOS)
     
     state.styled_image = convert_image(styled_image)
