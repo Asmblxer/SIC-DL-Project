@@ -7,7 +7,12 @@ import pickle
 import numpy as np
 import tensorflow_hub as hub
 import tensorflow as tf
+<<<<<<< HEAD
+import gdown
+
+=======
 from tensorflow.keras.utils import load_img, img_to_array
+>>>>>>> parent of 412c605 (upload models)
 
 path_upload = ""
 original_image = None
@@ -22,14 +27,25 @@ styled = False
 style_image = None
 content_image = None
 
+
 # Load the colorization model
-with open("color_model.pkl", "rb") as model_file:
+model_url = 'https://drive.google.com/uc?id=1_UuFP93RXET8evufhCt7sTuDXUPpj8tk'
+gdown.download(model_url, 'colorizer_model.pkl', quiet=False)
+
+with open("colorizer_model.pkl", "rb") as model_file:
     colorizer_model = pickle.load(model_file)
 
 # Load the styling model     
+<<<<<<< HEAD
+style_model = hub.load('https://kaggle.com/models/google/arbitrary-image-stylization-v1/frameworks/TensorFlow1/variations/256/versions/1')
+# with open("styl_model.pkl", "rb") as model_file:
+#     style_model = pickle.load(model_file)
+
+=======
 style_model = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2')
 # with open("style_model.pkl", "rb") as style_model_file:
 #     style_model = pickle.load(style_model_file)
+>>>>>>> parent of 412c605 (upload models)
 
 def convert_image(img):
     buf = BytesIO()
