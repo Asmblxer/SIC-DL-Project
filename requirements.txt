@@ -1,4 +1,6 @@
-numpy==1.26
-taipy==4.0.0.dev0
-rembg
-pillow
+taipy-gui
+Pillow
+numpy
+tensorflow-hub
+tensorflow
+gdown
