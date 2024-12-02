@@ -32,7 +32,7 @@ with open("colorizer_model.pkl", "rb") as model_file:
     colorizer_model = pickle.load(model_file)
 
 # Load the styling model     
-style_model = hub.load('https://kaggle.com/models/google/arbitrary-image-stylization-v1/frameworks/TensorFlow1/variations/256/versions/1')
+style_model = hub.load('https://kaggle.com/models/google/arbitrary-image-stylization-v1/TensorFlow1/256/1')
 # with open("styl_model.pkl", "rb") as model_file:
 #     style_model = pickle.load(model_file)
 
